@@ -15,6 +15,7 @@ import { Response } from "express"
 }) => {
     res.status(jsonData.statusCode).json({
         success: jsonData.success,
+        status:jsonData.statusCode,
         message: jsonData.message,
         meta: jsonData.meta || null || undefined,
         data: jsonData.data || null || undefined
@@ -22,4 +23,4 @@ import { Response } from "express"
 }
 
 
-export default sendResponse
+export default sendResponse;

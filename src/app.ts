@@ -18,9 +18,10 @@ app.use(express.urlencoded({ extended: true }));
 
 
 //users apis
-app.use('/api/v1', router)
+// app.use('/api', router)
+app.use('/api', router)
 
-app.use(globalErrorHandler)
+// app.use(globalErrorHandler)
 
 //not found route
 app.use((req: Request, res: Response, next: NextFunction) => {
