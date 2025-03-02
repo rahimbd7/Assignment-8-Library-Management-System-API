@@ -5,7 +5,6 @@ import { BooksController } from './book.controller';
 
 const router = Router();
 
-console.log("Books routes loaded");
 router.post('/', BooksController.createBook);
 router.get('/', BooksController.getAllBooks);
 router.get('/:bookId', BooksController.getBookById);

@@ -3,7 +3,7 @@ import { MembersController } from './member.controller';
 
 const router = Router();
 
-console.log("Member routes loaded");
+
 router.post('/', MembersController.createMember);
 router.get('/', MembersController.getAllMembers);
 router.get('/:memberId', MembersController.getMemberById);

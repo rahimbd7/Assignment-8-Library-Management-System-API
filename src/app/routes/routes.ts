@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { BooksRouter } from '../modules/Book/book.route';
 import { MembersRouter } from '../modules/Memeber/member.route';
+import { BorrowRecordRouter } from './../modules/borrowAndReturn/borrowAndReturn.route';
 
 
 
@@ -14,6 +15,10 @@ const moduleRoutes = [
     {
         path: '/members',
         route: MembersRouter
+    },
+    {
+        path: '/',
+        route: BorrowRecordRouter
     }
 
 ]
