@@ -68,7 +68,34 @@ const returnBook = async (borrowId: string) => {
   });
 };
 
+const getOverdueBorrowList = async () => {
+  const currentDate = new Date();
+  
+  // Get borrow records where return date is not yet set and the borrow date is more than 14 days ago
+  const overdueRecords = await prisma.borrowRecord.findMany({
+    where: {
+      returnDate: null, 
+      borrowDate: {
+        lt: new Date(currentDate.setDate(currentDate.getDate() - 14)) // Overdue if borrowed more than 14 days ago
+      }
+    },
+    include: {
+      book: true, 
+      member: true 
+    }
+  });
+
+  // console.log(overdueRecords);
+  return overdueRecords.map((record) => ({
+    borrowId: record.borrowId,
+    bookTitle: record.book.title,
+    borrowerName: `${record.member.name} `,
+    overdueDays: Math.floor((currentDate.getTime() - new Date(record.borrowDate).getTime()) / (1000 * 3600 * 24)) // Days overdue
+  }));
+};
+
 export const BorrowRecordService = {
   borrowBook,
   returnBook,
+  getOverdueBorrowList
 };
