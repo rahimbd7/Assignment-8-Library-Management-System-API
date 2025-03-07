@@ -4,15 +4,24 @@ const prisma = new PrismaClient();
 
 // Get all books
 export const getAllBooks = async () => {
-  return await prisma.book.findMany();
+  const books = await prisma.book.findMany();
+  if (books.length === 0) {
+    throw new Error("No books found");
+  }
+  return books;
+
 };
 
 // Get a book by its ID
-export const getBookById = async (bookId: string) => {
-  return await prisma.book.findUnique({
+
+
+const getBookById = async (bookId: string) => {
+  const book = await prisma.book.findUnique({
     where: { bookId },
   });
+  return book;
 };
+
 
 // Create a new book
 export const createBook = async (data: Prisma.BookCreateInput) => {
@@ -23,6 +32,7 @@ export const createBook = async (data: Prisma.BookCreateInput) => {
 
 // Update book details
 export const updateBook = async (bookId: string, data: Prisma.BookUpdateInput) => {
+
   return await prisma.book.update({
     where: { bookId },
     data,
@@ -31,30 +41,18 @@ export const updateBook = async (bookId: string, data: Prisma.BookUpdateInput) =
 
 // Delete a book
 export const deleteBook = async (bookId: string) => {
-  return await prisma.book.delete({
+return await prisma.book.delete({
     where: { bookId },
   });
 };
 
-// Check availability of a book
-export const checkAvailability = async (bookId: string) => {
-  const book = await prisma.book.findUnique({
-    where: { bookId },
-  });
 
-  if (!book) {
-    throw new Error('Book not found');
-  }
-
-  return book.availableCopies > 0;
-};
 
 
 export const BookService = {
-    getAllBooks,
-    getBookById,
-    createBook,
-    updateBook,
-    deleteBook,
-    checkAvailability
+  getAllBooks,
+  getBookById,
+  createBook,
+  updateBook,
+  deleteBook
 }

@@ -3,12 +3,17 @@ import { PrismaClient, Prisma } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Get all members
-export const getAllMembers = async () => {
-  return await prisma.member.findMany();
+const getAllMembers = async () => {
+  const members = await prisma.member.findMany();
+  if (members.length === 0) {
+      throw new Error("No members found");
+  }
+  return members;
 };
 
+
 // Get a member by their ID
-export const getMemberById = async (memberId: string) => {
+const getMemberById = async (memberId: string) => {
   return await prisma.member.findUnique({
     where: { memberId },
   });
@@ -22,7 +27,7 @@ export const createMember = async (data: Prisma.MemberCreateInput) => {
 };
 
 // Update member details
-export const updateMember = async (memberId: string, data: Prisma.MemberUpdateInput) => {
+const updateMember = async (memberId: string, data: Prisma.MemberUpdateInput) => {
   return await prisma.member.update({
     where: { memberId },
     data,
@@ -30,7 +35,7 @@ export const updateMember = async (memberId: string, data: Prisma.MemberUpdateIn
 };
 
 // Delete a member
-export const deleteMember = async (memberId: string) => {
+const deleteMember = async (memberId: string) => {
   return await prisma.member.delete({
     where: { memberId },
   });

@@ -1,26 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Book` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `BorrowRecord` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Member` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropForeignKey
-ALTER TABLE "BorrowRecord" DROP CONSTRAINT "BorrowRecord_bookId_fkey";
-
--- DropForeignKey
-ALTER TABLE "BorrowRecord" DROP CONSTRAINT "BorrowRecord_memberId_fkey";
-
--- DropTable
-DROP TABLE "Book";
-
--- DropTable
-DROP TABLE "BorrowRecord";
-
--- DropTable
-DROP TABLE "Member";
-
 -- CreateTable
 CREATE TABLE "books" (
     "bookId" TEXT NOT NULL,

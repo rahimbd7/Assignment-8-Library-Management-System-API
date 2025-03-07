@@ -4,8 +4,8 @@ import cors from 'cors'
 
 import router from "./app/routes/routes";
 import httpStatus from 'http-status'
-import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import cookieParser from "cookie-parser";
+import globalErrorHandler from "./app/middlewares/globalErrorsHandler";
 const app: Application = express();
 
 
@@ -17,11 +17,19 @@ app.use(express.urlencoded({ extended: true }));
 
 
 
+// app.use('/',(req,res)=>{
+//     res.json(
+//         {
+//             message:"Welcome to Library Management System"
+//         }
+//     )
+// })
+
 //users apis
 // app.use('/api', router)
 app.use('/api', router)
 
-// app.use(globalErrorHandler)
+app.use(globalErrorHandler);
 
 //not found route
 app.use((req: Request, res: Response, next: NextFunction) => {

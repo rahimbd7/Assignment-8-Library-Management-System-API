@@ -7,9 +7,7 @@ const borrowBook = async (memberId: string, bookId: string) => {
     const book = await tx.book.findUnique({
       where: { bookId },
     });
-
-    if (!book) throw new Error("Book not found");
-    if (book.availableCopies < 1) throw new Error("No copies available");
+    if (book && book?.availableCopies < 1) throw new Error("No copies available");
 
     // Create a borrow record
     const borrowRecord = await tx.borrowRecord.create({
@@ -39,6 +37,8 @@ const borrowBook = async (memberId: string, bookId: string) => {
 };
 
 const returnBook = async (borrowId: string) => {
+  const isExistenceOfBorrowRecord = await prisma.borrowRecord.findUnique({ where: { borrowId , returnDate: null } });
+  if (!isExistenceOfBorrowRecord) throw new Error("Borrow record not found");
   return await prisma.$transaction(async (tx) => {
     const borrowRecord = await tx.borrowRecord.findUnique({
       where: { borrowId },
@@ -63,34 +63,36 @@ const returnBook = async (borrowId: string) => {
         },
       },
     });
-
     return { message: "Book returned successfully" };
   });
 };
 
+
 const getOverdueBorrowList = async () => {
   const currentDate = new Date();
-  
-  // Get borrow records where return date is not yet set and the borrow date is more than 14 days ago
+
+  // Get borrow records where return date is not set and borrow date is more than 14 days ago
   const overdueRecords = await prisma.borrowRecord.findMany({
     where: {
-      returnDate: null, 
+      returnDate: null, // Not yet returned
       borrowDate: {
-        lt: new Date(currentDate.setDate(currentDate.getDate() - 14)) // Overdue if borrowed more than 14 days ago
-      }
+        lt: new Date(currentDate.setDate(currentDate.getDate() - 14)), // Overdue if borrowed more than 14 days ago
+      },
     },
     include: {
       book: true, 
-      member: true 
-    }
+      member: true
+    },
   });
 
-  // console.log(overdueRecords);
+  // Map the records to return only relevant fields for the response
   return overdueRecords.map((record) => ({
     borrowId: record.borrowId,
     bookTitle: record.book.title,
-    borrowerName: `${record.member.name} `,
-    overdueDays: Math.floor((currentDate.getTime() - new Date(record.borrowDate).getTime()) / (1000 * 3600 * 24)) // Days overdue
+    borrowerName: `${record.member.name}`, 
+    overdueDays: Math.floor(
+      (currentDate.getTime() - new Date(record.borrowDate).getTime()) / (1000 * 3600 * 24)
+    ), 
   }));
 };
 

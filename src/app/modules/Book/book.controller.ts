@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import { BookService } from "./book.service";
+import { send } from "process";
 
 
 const createBook = catchAsync(async (req: Request, res: Response) => {
@@ -17,6 +18,7 @@ const createBook = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllBooks = catchAsync(async (req: Request, res: Response) => {
+try {
     const result = await BookService.getAllBooks();
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -24,6 +26,14 @@ const getAllBooks = catchAsync(async (req: Request, res: Response) => {
         message: "Books fetched successfully",
         data: result
     });
+} catch (error:any) {
+    sendResponse(res, {
+        statusCode: httpStatus.NOT_FOUND,
+        success: false,
+        message: error?.message || "Failed to fetch books",
+        data: null
+    })
+}
 });
 
 const getBookById = catchAsync(async (req: Request, res: Response) => {
@@ -36,6 +46,7 @@ const getBookById = catchAsync(async (req: Request, res: Response) => {
         data: result
     });
 });
+
 
 const updateBook = catchAsync(async (req: Request, res: Response) => {
     const { bookId } = req.params;
@@ -56,11 +67,11 @@ const deleteBook = catchAsync(async (req: Request, res: Response) => {
         statusCode: httpStatus.OK,
         success: true,
         message: "Book deleted successfully",
-        data:result
-    });
+        data: result
+    })
 });
 
-export const BooksController =  {
+export const BooksController = {
     createBook,
     getAllBooks,
     getBookById,

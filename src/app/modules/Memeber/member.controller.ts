@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import { MemberService } from "./member.service";
+import { send } from "process";
 
 const createMember = catchAsync(async (req: Request, res: Response) => {
     const memberData = req.body;
@@ -15,15 +16,36 @@ const createMember = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const getAllMembers = catchAsync(async (req: Request, res: Response) => {
-    const result = await MemberService.getAllMembers();
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Members fetched successfully",
-        data: result
-    });
-});
+// const getAllMembers = catchAsync(async (req: Request, res: Response) => {
+//     const result = await MemberService.getAllMembers();
+//     sendResponse(res, {
+//         statusCode: httpStatus.OK,
+//         success: true,
+//         message: "Members fetched successfully",
+//         data: result
+//     });
+// });
+
+const getAllMembers = async (req: Request, res: Response) => {
+    try {
+        const result = await MemberService.getAllMembers();
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: "Members fetched successfully",
+            data: result
+        });
+    } catch (error: any) {
+        sendResponse(res, {
+            statusCode: httpStatus.NOT_FOUND,
+            success: false,
+            message: error?.message || "Failed to fetch members",
+            data: null
+        })
+    }
+
+};
+
 
 const getMemberById = catchAsync(async (req: Request, res: Response) => {
     const { memberId } = req.params;
