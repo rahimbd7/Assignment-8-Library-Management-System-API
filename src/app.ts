@@ -17,7 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, 'index.html'))
 })
-app.use('/api', (req, res) => {
+
+app.get('/api', (req, res) => {
     res.json({
         success: true,
         path: req.path,
@@ -26,6 +27,5 @@ app.use('/api', (req, res) => {
 });
 
 app.use('/api', router)
-
 
 export default app;
